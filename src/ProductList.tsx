@@ -1,7 +1,7 @@
 // NANDARANI Catalog — premium product catalog section
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './lib/supabase'
-import { cleanWhatsappNumber, SHOP_MAP, SHOPS } from './business'
+import { normalizePhone, SHOP_MAP, SHOPS, WHATSAPP_NUMBER } from './business'
 import { shopWaNumber, useShops } from './ShopsContext'
 import SectionTitle from './components/SectionTitle'
 import {
@@ -314,7 +314,7 @@ export default function ProductList() {
   const getShopName = (shopId: string): string =>
     shops.find(s => s.id === shopId)?.name ?? SHOP_MAP[shopId] ?? shopId
   const getShopWhatsapp = (shopId: string): string =>
-    cleanWhatsappNumber(shopWaNumber(shops.find(s => s.id === shopId)))
+    normalizePhone(shopWaNumber(shops.find(s => s.id === shopId))) || WHATSAPP_NUMBER
   const shopOptions = shops.length > 0 ? shops.map(s => ({ id: s.id, name: s.name })) : SHOPS
 
   // Filters

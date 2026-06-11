@@ -1,10 +1,10 @@
-import { whatsappChatLink } from '../business'
+import { normalizePhone, whatsappChatLink } from '../business'
 import { shopWaNumber, useShops } from '../ShopsContext'
 import { WhatsAppIcon } from './icons'
 
 export default function Hero() {
   const { shops } = useShops()
-  const waNumber = shopWaNumber(shops.find(s => shopWaNumber(s)))
+  const waNumber = shopWaNumber(shops.find(s => normalizePhone(shopWaNumber(s))))
 
   return (
     <header className="relative overflow-hidden bg-gradient-to-b from-royal-950 via-[#0e1433] to-[#0a0e1f]">

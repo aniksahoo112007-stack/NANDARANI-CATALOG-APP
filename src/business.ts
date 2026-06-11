@@ -1,13 +1,9 @@
-// NANDARANI Catalog — business constants & helpers
+// NANDARANI Catalog — business constants & phone helpers
 // Live shop data comes from the Supabase `shops` table (see ShopsContext).
 // Constants below are FALLBACKS ONLY, used when live data is unavailable.
 
+/** Fallback WhatsApp number (clean digits), used only when no shop number exists. */
 export const WHATSAPP_NUMBER = '916296240320'
-export const PHONE_DISPLAY = '+91 62962 40320'
-export const PHONE_TEL = '+916296240320'
-
-// Fallback Google Maps direction link
-export const MAPS_DIRECTION_URL = 'https://maps.app.goo.gl/E2CthiuKTchSgqUP9'
 
 // Fallback shop names (used if shops table is unavailable)
 export const SHOP_MAP: Record<string, string> = {
@@ -17,22 +13,49 @@ export const SHOP_MAP: Record<string, string> = {
 
 export const SHOPS = Object.entries(SHOP_MAP).map(([id, name]) => ({ id, name }))
 
-/** Digits-only WhatsApp number; falls back to the default business number. */
-export function cleanWhatsappNumber(raw?: string | null): string {
-  const digits = (raw ?? '').replace(/\D/g, '')
-  return digits.length >= 10 ? digits : WHATSAPP_NUMBER
+/* ---------------- Phone helpers (single source of truth) ---------------- */
+
+/**
+ * Normalize any phone input to clean WhatsApp-ready digits (Indian numbers).
+ * - Strips +, spaces, dashes, brackets, and any non-digits
+ * - Strips leading zeros
+ * - 10 digits        -> prefixed with country code 91
+ * - 12 digits w/ 91  -> used as-is
+ * - anything else    -> '' (invalid/missing)
+ */
+export function normalizePhone(raw?: string | null): string {
+  let digits = (raw ?? '').replace(/\D/g, '')
+  digits = digits.replace(/^0+/, '')
+  if (digits.length === 10) return `91${digits}`
+  if (digits.length === 12 && digits.startsWith('91')) return digits
+  return ''
 }
 
-/** wa.me chat link. Uses the given shop number when provided, fallback otherwise. */
+/** Customer-friendly display: 916296240320 -> "+91 62962 40320". '' if invalid. */
+export function formatPhoneDisplay(raw?: string | null): string {
+  const d = normalizePhone(raw)
+  if (!d) return ''
+  return `+91 ${d.slice(2, 7)} ${d.slice(7)}`
+}
+
+/** Call link: tel:+916296240320. '' if invalid/missing. */
+export function telLink(raw?: string | null): string {
+  const d = normalizePhone(raw)
+  return d ? `tel:+${d}` : ''
+}
+
+/**
+ * wa.me chat link with clean digits only (no +, spaces, or dashes).
+ * Falls back to the default business number ONLY when no valid number is given —
+ * shop-specific UI should check normalizePhone() first and disable instead.
+ */
 export function whatsappChatLink(text?: string, number?: string | null): string {
-  const base = `https://wa.me/${cleanWhatsappNumber(number)}`
+  const digits = normalizePhone(number) || WHATSAPP_NUMBER
+  const base = `https://wa.me/${digits}`
   return text ? `${base}?text=${encodeURIComponent(text)}` : base
 }
 
-/** Display form of a phone/WhatsApp number, e.g. tel: link target. */
-export function telLink(raw?: string | null): string {
-  return `tel:+${cleanWhatsappNumber(raw)}`
-}
+/* ---------------- Business hours ---------------- */
 
 /**
  * business_hours may arrive as plain text, JSON array, or JSON object.

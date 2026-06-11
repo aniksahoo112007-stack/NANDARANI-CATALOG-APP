@@ -1,4 +1,10 @@
-import { cleanWhatsappNumber, formatBusinessHours, telLink, whatsappChatLink } from '../business'
+import {
+  formatBusinessHours,
+  formatPhoneDisplay,
+  normalizePhone,
+  telLink,
+  whatsappChatLink,
+} from '../business'
 import { shopWaNumber, useShops } from '../ShopsContext'
 import SectionTitle from './SectionTitle'
 import { ClockIcon, MapPinIcon, PhoneIcon, WhatsAppIcon } from './icons'
@@ -6,8 +12,8 @@ import { ClockIcon, MapPinIcon, PhoneIcon, WhatsAppIcon } from './icons'
 export default function ContactSection() {
   const { shops, status, error } = useShops()
 
-  const primaryShop = shops.find(s => shopWaNumber(s)) ?? shops[0]
-  const primaryNumber = shopWaNumber(primaryShop)
+  const primaryShop = shops.find(s => normalizePhone(shopWaNumber(s))) ?? shops[0]
+  const primaryDigits = normalizePhone(shopWaNumber(primaryShop))
   const shopsWithHours = shops
     .map(shop => ({ shop, lines: formatBusinessHours(shop.business_hours) }))
     .filter(({ lines }) => lines.length > 0)
@@ -72,19 +78,19 @@ export default function ContactSection() {
                 Call or Message
               </h3>
             </div>
-            {primaryNumber ? (
+            {primaryDigits ? (
               <div className="flex flex-col gap-3">
                 <a
-                  href={telLink(primaryNumber)}
+                  href={telLink(primaryDigits)}
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-royal-400/40 px-4 py-2.5 text-sm font-semibold text-royal-300 transition-all duration-200 hover:scale-[1.03] hover:bg-royal-500/10 active:scale-95"
                 >
                   <PhoneIcon />
-                  +{cleanWhatsappNumber(primaryNumber)}
+                  {formatPhoneDisplay(primaryDigits)}
                 </a>
                 <a
                   href={whatsappChatLink(
                     'Hello! I am contacting you from the NANDARANI Catalog website.',
-                    primaryNumber,
+                    primaryDigits,
                   )}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -1,4 +1,10 @@
-import { cleanWhatsappNumber, formatBusinessHours, whatsappChatLink, telLink } from '../business'
+import {
+  formatBusinessHours,
+  formatPhoneDisplay,
+  normalizePhone,
+  telLink,
+  whatsappChatLink,
+} from '../business'
 import { shopWaNumber, useShops } from '../ShopsContext'
 import SectionTitle from './SectionTitle'
 import { ClockIcon, MapPinIcon, PhoneIcon, StoreIcon, WhatsAppIcon } from './icons'
@@ -53,7 +59,7 @@ export default function ShopShowcase() {
             className={`mx-auto grid max-w-5xl grid-cols-1 gap-8 lg:gap-10 ${shops.length > 1 ? 'lg:grid-cols-2' : 'lg:max-w-2xl'}`}
           >
             {shops.map(shop => {
-              const waNumber = shopWaNumber(shop)
+              const waDigits = normalizePhone(shopWaNumber(shop))
               const hoursLines = formatBusinessHours(shop.business_hours)
               return (
                 <div
@@ -113,15 +119,15 @@ export default function ShopShowcase() {
                       </div>
 
                       {/* WhatsApp / phone number */}
-                      {waNumber ? (
+                      {waDigits ? (
                         <a
-                          href={telLink(waNumber)}
+                          href={telLink(waDigits)}
                           className="flex items-center gap-2.5 transition-colors hover:text-gold-300"
                         >
                           <span className="shrink-0 text-royal-300">
                             <PhoneIcon />
                           </span>
-                          +{cleanWhatsappNumber(waNumber)}
+                          {formatPhoneDisplay(waDigits)}
                         </a>
                       ) : (
                         <div className="flex items-center gap-2.5">
@@ -167,11 +173,11 @@ export default function ShopShowcase() {
                           Map link not added
                         </span>
                       )}
-                      {waNumber ? (
+                      {waDigits ? (
                         <a
                           href={whatsappChatLink(
                             `Hello! I have a question about ${shop.name}.`,
-                            waNumber,
+                            waDigits,
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
