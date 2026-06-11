@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --color-royal-50: #eef4ff;
+  --color-royal-100: #dce6fd;
+  --color-royal-200: #c0d4fc;
+  --color-royal-300: #94b8fa;
+  --color-royal-400: #6191f5;
+  --color-royal-500: #3d6cef;
+  --color-royal-600: #274ce3;
+  --color-royal-700: #1f3ad0;
+  --color-royal-800: #2031a9;
+  --color-royal-900: #1f2e85;
+  --color-royal-950: #131c51;
+
+  --color-gold-50: #fbf8eb;
+  --color-gold-100: #f6efcb;
+  --color-gold-200: #eedd9a;
+  --color-gold-300: #e4c560;
+  --color-gold-400: #dcb338;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b18a22;
+  --color-gold-700: #8e681e;
+  --color-gold-800: #765420;
+  --color-gold-900: #654621;
+  --color-gold-950: #3b2610;
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: #0a0e1f;
+  color: #cbd5e1;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Page load fade ---------- */
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-fade {
+  animation: page-fade 0.7s ease both;
+}
+
+/* ---------- Hero text slide-up ---------- */
+
+@keyframes rise-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-rise {
+  animation: rise-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-rise-1 {
+  animation-delay: 0.08s;
+}
+.hero-rise-2 {
+  animation-delay: 0.18s;
+}
+.hero-rise-3 {
+  animation-delay: 0.28s;
+}
+.hero-rise-4 {
+  animation-delay: 0.38s;
+}
+.hero-rise-5 {
+  animation-delay: 0.5s;
+}
+
+/* ---------- Scroll reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .page-fade,
+  .hero-rise {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
